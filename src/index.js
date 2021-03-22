@@ -1,6 +1,39 @@
-import React from 'react'
-import styles from './styles.module.css'
+/* eslint-disable react/react-in-jsx-scope */
+import styles from './index.module.css'
+import React, { useEffect, useState } from 'react'
+function Crossfade({ images, customInterval }) {
+  const backgroundImages = images
+  const carouselLength = backgroundImages.length
+  const [currentCarouselIndex, setCarouselIndex] = useState(0)
 
-export const ExampleComponent = ({ text }) => {
-  return <div className={styles.test}>Example Component: {text}</div>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselIndex((currentCarouselIndex) => {
+        const newIndex =
+          currentCarouselIndex + 1 >= carouselLength
+            ? 0
+            : currentCarouselIndex + 1
+        return newIndex
+      })
+    }, customInterval || 5000)
+    return () => clearInterval(interval)
+  }, [currentCarouselIndex])
+
+  const carousel = backgroundImages.map((element, index) => {
+    return (
+      <img
+        key={index}
+        // className={currentCarouselIndex === index ? 'active' : 'inactive'}
+        className={`${styles.background} ${
+          currentCarouselIndex === index ? styles.active : styles.inactive
+        }`}
+        src={element}
+      />
+    )
+  })
+
+  // return <div id='background-background'>{carousel}</div>
+  return <div className={styles.backgroundBackground}>{carousel}</div>
 }
+
+export default Crossfade
